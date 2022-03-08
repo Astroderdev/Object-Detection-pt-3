@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap.min.css" integrity="sha512-Ez0cGzNzHR1tYAv56860NLspgUGuQw16GiOOp/I2LuTmpSK9xDXlgJz3XN4cnpXWDmkNBKXR/VDMTCnAaEooxA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hubballi&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js"></script>
+    <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object Identification</title>
+</head>
+<center>
+    <style>
+        canvas{
+            border-radius: 10px;
+            border:2px dashed aquamarine;
+            margin-top: 200px;
+        }
+    </style>
+<body background="Background.jpg" style="background-size: cover; font-family: 'Hubballi', cursive;">
+    <div class="heading" style="width: 500px; background-color: aqua; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
+        <h1>Object Identification Webapp</h1>
+        <h3>Sofa room</h3>
+    </div> 
+    <a href="index.html" class="btn btn-success">Back</a> 
+    <br>
+    <br>
+    <a style="pointer-events: none;" class="btn btn-danger" id="status">Status: As of now nothing is happened yet</a>
+    <a style="pointer-events: none;" class="btn btn-danger" id="objects">Objects Count: As of now nothing is happened yet</a>
+
+    <div style="background-color: blue; color: white; bottom: 0; position:fixed; width: 100%;">
+        Developed By Amresh Dey
+    </div>
+    
+</body>
+<script>
+    var status = "";
+    var Imageactv = "";
+    var objects = [];
+    function preload(){
+        Imageactv = loadImage("https://i.postimg.cc/BbMxXGFp/oie-582122-XOyr-Qwc9.jpg");
+    }
+    function setup(){
+        cocossd = ml5.objectDetector('cocossd', modelLoaded);
+        document.getElementById("status").innerHTML = "Status: Detecting Objects";
+        document.getElementById("objects").innerHTML = "Objects Count: Detecting Objects";
+        canvas = createCanvas(440, 320);
+        background("white");
+        canvas.center();
+    }
+    function modelLoaded(){
+        console.log("cocossd is loaded");
+        status = true;
+        cocossd.detect(Imageactv, gotResults);
+    }
+    function draw() {
+        image(Imageactv, 0, 0, 440, 320);
+        if(status != "") {
+            for (var i = 0; i < objects.length; i++) 
+            { 
+                document.getElementById("status").innerHTML = "Status : Object Detected"; 
+                document.getElementById("objects").innerHTML = "Object Count: "+ objects.length; 
+                percent = floor(objects[i].confidence * 100); 
+                fill("red"); 
+                stroke("red");
+                text(objects[i].label + " " + percent + "%", objects[i].x + 15, objects[i].y + 15); 
+                noFill(); 
+                rect(objects[i].x, objects[i].y, objects[i].width, objects[i].height); 
+            } 
+            }
+             
+            }
+    function gotResults(results, error){
+      if(error){
+        console.log(error);
+      }
+      if(results){
+        console.log(results);
+        objects = results; 
+      }
+    }
+
+</script>
+</center>
+</html>
